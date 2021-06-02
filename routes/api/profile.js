@@ -64,26 +64,24 @@ router.post(
     } = req.body;
 
     // Build profile object
-    const profileFields = {};
-    profileFields.user = req.user.id;
-    if (company) profileFields.company = company;
-    if (website) profileFields.website = website;
-    if (location) profileFields.location = location;
-    if (bio) profileFields.bio = bio;
-    if (status) profileFields.status = status;
-    if (githubusername) profileFields.githubusername = githubusername;
-    if (skills) {
-      // Turn list (with commas and variable amounts of whitespace) into array
-      profileFields.skills = skills.split(',').map((skill) => skill.trim());
-    }
+    const profileFields = {
+      user: req.user.id,
+      company,
+      location,
+      website,
+      bio,
+      // If skills is an array, return the array. Else, turn list (with commas and variable amounts of whitespace) into array
+      skills: Array.isArray(skills)
+        ? skills
+        : skills.split(',').map((skill) => ' ' + skill.trim()),
+      status,
+      githubusername
+    };
 
-    // Build social object
-    profileFields.social = {};
-    if (youtube) profileFields.social.youtube = youtube;
-    if (twitter) profileFields.social.twitter = twitter;
-    if (facebook) profileFields.social.facebook = facebook;
-    if (linkedin) profileFields.social.linkedin = linkedin;
-    if (instagram) profileFields.social.instagram = instagram;
+    // Build social object and add to profileFields
+    const socialfields = { youtube, twitter, instagram, linkedin, facebook };
+
+    profileFields.social = socialfields;
 
     try {
       let profile = await Profile.findOne({ user: req.user.id });
