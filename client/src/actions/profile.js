@@ -4,9 +4,11 @@ import { setAlert } from './alert';
 import {
   CLEAR_PROFILE,
   GET_PROFILE,
+  GET_PROFILES,
   PROFILE_ERROR,
   UPDATE_PROFILE,
-  ACCOUNT_DELETED
+  ACCOUNT_DELETED,
+  GET_REPOS
 } from './types';
 
 // Get current user's profile
@@ -17,6 +19,62 @@ export const getCurrentProfile = () => async (dispatch) => {
     // Dispatches an action of a certain type (sends the type and payload to the reducer)
     dispatch({
       type: GET_PROFILE,
+      payload: res.data
+    });
+  } catch (err) {
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+// Get all profiles
+export const getProfiles = () => async (dispatch) => {
+  dispatch({ type: CLEAR_PROFILE });
+
+  try {
+    const res = await axios.get('/api/profile');
+
+    // Dispatches an action of a certain type (sends the type and payload to the reducer)
+    dispatch({
+      type: GET_PROFILES,
+      payload: res.data
+    });
+  } catch (err) {
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+// Get profile by ID
+export const getProfileById = (userId) => async (dispatch) => {
+  try {
+    const res = await axios.get(`/api/profile/user/${userId}`);
+
+    // Dispatches an action of a certain type (sends the type and payload to the reducer)
+    dispatch({
+      type: GET_PROFILE,
+      payload: res.data
+    });
+  } catch (err) {
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+// Get GitHub repos
+export const getGithubRepos = (githubusername) => async (dispatch) => {
+  try {
+    const res = await axios.get(`/api/profile/github/${githubusername}`);
+
+    // Dispatches an action of a certain type (sends the type and payload to the reducer)
+    dispatch({
+      type: GET_REPOS,
       payload: res.data
     });
   } catch (err) {
