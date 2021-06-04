@@ -150,8 +150,9 @@ router.get('/user/:user_id', async (req, res) => {
 // @access  Private
 router.delete('/', auth, async (req, res) => {
   try {
-    //@TODO - remove user's posts
-
+    // Remove user's posts
+    // Note: in my application I see no need to do this. You can keep handle it reddit style
+    await Post.deleteMany({ user: req.user.id });
     // Remove profile
     await Profile.findOneAndRemove({ user: req.user.id });
     // Remove user
